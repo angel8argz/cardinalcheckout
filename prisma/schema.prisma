@@ -1,0 +1,78 @@
+// CardinalCheckout data model.
+// Mirrors WebCheckout closely enough that migration is a CSV import.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ItemStatus {
+  AVAILABLE
+  CHECKED_OUT
+  MAINTENANCE
+  LOST
+}
+
+model Category {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  items     Item[]
+  policy    Policy?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Item {
+  id             Int        @id @default(autoincrement())
+  name           String
+  // Preserved from WebCheckout so existing physical labels keep working.
+  barcode        String     @unique
+  status         ItemStatus @default(AVAILABLE)
+  conditionNotes String?
+  serialNumber   String?
+  categoryId     Int
+  category       Category   @relation(fields: [categoryId], references: [id])
+  loans          Loan[]
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+}
+
+model Patron {
+  id        Int      @id @default(autoincrement())
+  sunetId   String   @unique
+  firstName String
+  lastName  String
+  email     String?
+  loans     Loan[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Loan {
+  id         Int       @id @default(autoincrement())
+  itemId     Int
+  item       Item      @relation(fields: [itemId], references: [id])
+  patronId   Int
+  patron     Patron    @relation(fields: [patronId], references: [id])
+  checkoutAt DateTime  @default(now())
+  dueAt      DateTime
+  returnedAt DateTime?
+  // The staff member who processed the loan. No auth/User model in the MVP.
+  staffName  String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+model Policy {
+  id             Int      @id @default(autoincrement())
+  categoryId     Int      @unique
+  category       Category @relation(fields: [categoryId], references: [id])
+  loanPeriodDays Int
+  finePerDay     Decimal  @default(0) @db.Decimal(10, 2)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}

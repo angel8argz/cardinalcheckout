@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm -v)",
+      "Bash(npx -v)",
+      "Bash(docker -v)",
+      "Bash(docker compose *)",
+      "Bash(npx --yes create-next-app@latest .scaffold-tmp --ts --app --tailwind --eslint --src-dir --import-alias \"@/*\" --use-npm --no-turbopack --skip-install)",
+      "Bash(npx --yes create-next-app@15 scaffold-tmp --ts --app --tailwind --eslint --src-dir --import-alias \"@/*\" --use-npm --no-turbopack --skip-install)",
+      "Bash(npx prisma *)",
+      "Bash(docker exec *)",
+      "Bash(npm run *)",
+      "Bash(rm -rf node_modules package-lock.json)",
+      "Bash(npm install *)",
+      "Bash(node -e \"const p=require\\('./node_modules/@tailwindcss/oxide/package.json'\\); console.log\\('version',p.version\\); console.log\\(JSON.stringify\\(p.optionalDependencies,null,2\\)\\)\")",
+      "Bash(npm view *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code} -> %{redirect_url}\\\\n\" http://localhost:3000/)",
+      "Bash(curl -s http://localhost:3000/dashboard)",
+      "Read(//tmp/**)",
+      "Bash(node -e ' *)",
+      "Bash(pkill -f \"next dev\")",
+      "Bash(pkill -f \"next-server\")"
+    ]
+  }
+}
