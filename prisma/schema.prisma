@@ -1,0 +1,209 @@
+// CardinalCheckout data model.
+// Mirrors WebCheckout's core entity classes near 1:1 so migration from
+// WebCheckout is a CSV import, not a rebuild.
+//
+// WebCheckout -> CardinalCheckout mapping:
+//   Organization        -> Organization
+//   Department          -> Department
+//   Resource Type       -> ResourceType (carries the circulation policy)
+//   Bundle              -> Bundle
+//   Resource            -> Resource
+//   Patron Group        -> PatronGroup
+//   Patron              -> Patron
+//   Operator            -> Operator
+//   Authorization       -> Authorization
+//   Allocation          -> Allocation (the checkout record)
+//   Allocation line     -> AllocationLineItem
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ResourceStatus {
+  AVAILABLE
+  CHECKED_OUT
+  MAINTENANCE
+  LOST
+  RETIRED
+}
+
+// Lifecycle of an Allocation. Overdue is derived (scheduledEnd < now and not
+// yet fully returned), never stored, to avoid state drift.
+enum AllocationStatus {
+  RESERVED
+  CHECKED_OUT
+  RETURNED
+  CANCELLED
+}
+
+// Top-level owning entity. A single tech desk is one Organization; the model
+// allows several so other universities could share an instance later.
+model Organization {
+  id          Int          @id @default(autoincrement())
+  name        String       @unique
+  departments Department[]
+  patrons     Patron[]
+  operators   Operator[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+// An administrative unit within an Organization. Scopes resources, patrons,
+// and operators.
+model Department {
+  id             Int          @id @default(autoincrement())
+  name           String
+  organizationId Int
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  resources      Resource[]
+  patrons        Patron[]
+  operators      Operator[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@unique([organizationId, name])
+}
+
+// WebCheckout resource type. Carries the circulation policy (loan period and
+// fine rule) that WebCheckout attaches to the type.
+model ResourceType {
+  id             Int             @id @default(autoincrement())
+  name           String          @unique
+  loanPeriodDays Int             @default(7)
+  finePerDay     Decimal         @default(0) @db.Decimal(10, 2)
+  resources      Resource[]
+  authorizations Authorization[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+}
+
+// A kit of resources circulated as a single unit (for example, a camera body
+// plus lens plus bag).
+model Bundle {
+  id        Int        @id @default(autoincrement())
+  name      String
+  barcode   String?    @unique
+  resources Resource[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+// A physical, circulating unit.
+model Resource {
+  id             Int                  @id @default(autoincrement())
+  name           String
+  // Preserved from WebCheckout so existing physical labels keep working.
+  barcode        String               @unique
+  status         ResourceStatus       @default(AVAILABLE)
+  serialNumber   String?
+  conditionNotes String?
+  resourceTypeId Int
+  resourceType   ResourceType         @relation(fields: [resourceTypeId], references: [id])
+  departmentId   Int?
+  department     Department?          @relation(fields: [departmentId], references: [id])
+  bundleId       Int?
+  bundle         Bundle?              @relation(fields: [bundleId], references: [id])
+  lineItems      AllocationLineItem[]
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+}
+
+// Grouping of patrons (for example, Students, Faculty, Staff). Drives
+// authorizations.
+model PatronGroup {
+  id             Int             @id @default(autoincrement())
+  name           String          @unique
+  patrons        Patron[]
+  authorizations Authorization[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+}
+
+// A borrower, keyed on SUNet ID. Development data is synthetic only; never
+// load real student records (FERPA).
+model Patron {
+  id             Int           @id @default(autoincrement())
+  sunetId        String        @unique
+  firstName      String
+  lastName       String
+  email          String?
+  patronGroupId  Int?
+  patronGroup    PatronGroup?  @relation(fields: [patronGroupId], references: [id])
+  departmentId   Int?
+  department     Department?   @relation(fields: [departmentId], references: [id])
+  organizationId Int?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  allocations    Allocation[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+}
+
+// A staff member who processes allocations. Replaces the old free-text
+// staffName string. No auth in the MVP; this is a record, not a login.
+model Operator {
+  id             Int           @id @default(autoincrement())
+  name           String
+  email          String?       @unique
+  departmentId   Int?
+  department     Department?   @relation(fields: [departmentId], references: [id])
+  organizationId Int?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  allocations    Allocation[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+}
+
+// What a PatronGroup is permitted to borrow from a ResourceType, with optional
+// caps. Mirrors WebCheckout's authorization matrix.
+model Authorization {
+  id              Int          @id @default(autoincrement())
+  patronGroupId   Int
+  patronGroup     PatronGroup  @relation(fields: [patronGroupId], references: [id])
+  resourceTypeId  Int
+  resourceType    ResourceType @relation(fields: [resourceTypeId], references: [id])
+  maxDurationDays Int?
+  maxQuantity     Int?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  @@unique([patronGroupId, resourceTypeId])
+}
+
+// The checkout record. WebCheckout schedules a start/end, records the actual
+// start when picked up and actual end when fully returned, and carries one or
+// more line items.
+model Allocation {
+  id            Int                  @id @default(autoincrement())
+  patronId      Int
+  patron        Patron               @relation(fields: [patronId], references: [id])
+  operatorId    Int?
+  operator      Operator?            @relation(fields: [operatorId], references: [id])
+  status        AllocationStatus     @default(RESERVED)
+  scheduledStart DateTime            @default(now())
+  scheduledEnd  DateTime
+  actualStart   DateTime?
+  actualEnd     DateTime?
+  lineItems     AllocationLineItem[]
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+}
+
+// One resource within an allocation. Tracks per-resource return time and
+// condition in/out so partial returns and damage are recorded per item.
+model AllocationLineItem {
+  id           Int        @id @default(autoincrement())
+  allocationId Int
+  allocation   Allocation @relation(fields: [allocationId], references: [id], onDelete: Cascade)
+  resourceId   Int
+  resource     Resource   @relation(fields: [resourceId], references: [id])
+  returnedAt   DateTime?
+  conditionOut String?
+  conditionIn  String?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
