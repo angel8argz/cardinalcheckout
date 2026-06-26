@@ -6,9 +6,12 @@ Lathrop Tech Desk at Stanford.
 
 ## Status
 
-Early development. This build is a runnable skeleton: schema, synthetic seed
-data, and a live staff dashboard. Checkout/return flows, patron pages, inventory
-editing, reservations, notifications, and auth are not built yet.
+Early development. This build is a runnable skeleton with the Cardinal-themed
+console shell (dark sidebar + top header), a live staff dashboard, and an Active
+Loans view — all reading from the database. Checkout, Return, Resources,
+Patrons, and Settings are nav links to placeholder pages. The functional
+checkout/return flows, patron pages, inventory editing, reservations,
+notifications, and auth are not built yet.
 
 ## Stack
 
@@ -16,6 +19,7 @@ editing, reservations, notifications, and auth are not built yet.
 - PostgreSQL
 - Prisma
 - Tailwind CSS v3
+- lucide-react (icons)
 
 ## Prerequisites
 

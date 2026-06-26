@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;background:#F7F5F1;color:#191C18;}
+  ::-webkit-scrollbar{width:10px;height:10px;}
+  ::-webkit-scrollbar-thumb{background:#dcd7ce;border-radius:8px;border:3px solid #F7F5F1;}
+</style>
+</helmet>
+<div style="display:flex; min-height:100vh; width:100%; background:#F7F5F1;">
+
+  <aside style="width:248px; flex:none; background:#11150F; color:#cfd3c9; display:flex; flex-direction:column; position:sticky; top:0; height:100vh;">
+    <div style="display:flex; align-items:center; gap:11px; padding:22px 20px 24px;">
+      <div style="width:30px; height:30px; flex:none; border-radius:8px; background:#8C1515; display:flex; align-items:center; justify-content:center;">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><path d="M3.27 6.96L12 12l8.73-5.04"></path><path d="M12 22V12"></path></svg>
+      </div>
+      <span style="font:700 16px/1 Inter; color:#fff; letter-spacing:-.01em;">CardinalCheckout</span>
+    </div>
+
+    <nav style="flex:1; overflow-y:auto; padding:4px 12px;">
+      <sc-for list="{{ navGroups }}" as="group" hint-placeholder-count="3">
+        <div style="margin-bottom:18px;">
+          <div style="font:600 11px/1 Inter; letter-spacing:.07em; text-transform:uppercase; color:#5d6357; padding:0 12px 10px;">{{ group.label }}</div>
+          <sc-for list="{{ group.items }}" as="item" hint-placeholder-count="4">
+            <button onClick="{{ item.onClick }}" style="{{ item.style }}" style-hover="{{ item.styleHover }}">
+              <span style="display:flex; color:{{ item.iconColor }};">{{ item.icon }}</span>
+              <span style="flex:1; text-align:left;">{{ item.label }}</span>
+            </button>
+          </sc-for>
+        </div>
+      </sc-for>
+    </nav>
+
+    <div style="padding:14px 16px; border-top:1px solid #20261c; display:flex; align-items:center; gap:11px;">
+      <div style="width:32px; height:32px; flex:none; border-radius:50%; background:#8C1515; color:#fff; display:flex; align-items:center; justify-content:center; font:600 13px Inter;">AR</div>
+      <div style="flex:1; min-width:0;">
+        <div style="font:600 13px/1.2 Inter; color:#fff;">Angel Ramirez</div>
+        <div style="font:400 11px/1.3 Inter; color:#777c70;">The Tech Desk</div>
+      </div>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#777c70" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+    </div>
+  </aside>
+
+  <main style="flex:1; min-width:0; display:flex; flex-direction:column;">
+
+    <header style="display:flex; align-items:center; gap:16px; padding:16px 32px; background:rgba(247,245,241,.85); backdrop-filter:blur(8px); border-bottom:1px solid #E7E3DC; position:sticky; top:0; z-index:5;">
+      <div style="flex:1; max-width:520px; position:relative; display:flex; align-items:center;">
+        <svg style="position:absolute; left:14px;" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#9a9e92" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg>
+        <input placeholder="Search patrons, resources, or scan a barcode" style="width:100%; height:42px; padding:0 92px 0 40px; border-radius:10px; border:1px solid #E7E3DC; background:#fff; font:400 14px Inter; color:#191C18; outline:none;" />
+        <div style="position:absolute; right:12px; display:flex; align-items:center; gap:8px;">
+          <span style="font:500 11px Inter; color:#9a9e92; border:1px solid #E7E3DC; border-radius:6px; padding:3px 7px; background:#F7F5F1;">⌘K</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8C1515" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5v14"></path><path d="M7 5v14"></path><path d="M11 5v14"></path><path d="M15 5v14"></path><path d="M19 5v14"></path></svg>
+        </div>
+      </div>
+      <div style="flex:1;"></div>
+      <button style="display:flex; align-items:center; gap:7px; height:40px; padding:0 16px; border-radius:10px; border:none; background:#8C1515; color:#fff; font:600 13px Inter; cursor:pointer;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+        New checkout
+      </button>
+      <button style="position:relative; width:40px; height:40px; flex:none; border-radius:10px; border:1px solid #E7E3DC; background:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6B6F68" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+        <span style="position:absolute; top:-5px; right:-5px; min-width:18px; height:18px; padding:0 4px; border-radius:9px; background:#E03131; color:#fff; font:600 10px/18px Inter; text-align:center;">5</span>
+      </button>
+    </header>
+
+    <div style="flex:1; padding:32px;">
+      <sc-if value="{{ isDashboard }}" hint-placeholder-val="{{ true }}">
+        <div style="max-width:1180px;">
+          <div style="display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:24px;">
+            <div>
+              <h1 style="font:700 28px/1.1 Inter; letter-spacing:-.02em; margin:0;">Dashboard</h1>
+              <p style="font:400 14px Inter; color:#6B6F68; margin:6px 0 0;">Tuesday, June 17 · 47 active loans on the floor</p>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px; font:500 13px Inter; color:#1A8A53; background:#E7F4EC; padding:7px 13px; border-radius:10px;">
+              <span style="width:7px; height:7px; border-radius:50%; background:#1A8A53;"></span>System healthy
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px;">
+            <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="4">
+              <div style="{{ k.cardStyle }}">
+                <div style="display:flex; align-items:flex-start; justify-content:space-between;">
+                  <span style="font:600 11px Inter; letter-spacing:.06em; text-transform:uppercase; color:#6B6F68;">{{ k.label }}</span>
+                  <span style="display:flex; color:{{ k.accent }};">{{ k.icon }}</span>
+                </div>
+                <div style="font:700 34px/1 Inter; letter-spacing:-.02em; margin-top:14px;">{{ k.value }}</div>
+                <div style="font:400 13px Inter; color:#6B6F68; margin-top:5px;">{{ k.sub }}</div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+            <div style="background:#fff; border:1px solid #E7E3DC; border-radius:16px; padding:22px 24px; box-shadow:0 1px 2px rgba(20,25,18,.04), 0 6px 16px rgba(20,25,18,.05);">
+              <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+                <div style="display:flex; align-items:center; gap:9px;">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#6B6F68" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg>
+                  <h2 style="font:600 17px Inter; margin:0;">Outgoing</h2>
+                </div>
+                <a style="font:500 13px Inter; color:#8C1515; text-decoration:none; cursor:pointer;">View all</a>
+              </div>
+              <p style="font:400 12px Inter; color:#9a9e92; margin:0 0 10px;">Active &amp; upcoming loans leaving the desk</p>
+              <sc-for list="{{ outgoing }}" as="row" hint-placeholder-count="4">
+                <div style="display:flex; align-items:center; gap:14px; padding:13px 10px; border-radius:10px; cursor:pointer;" style-hover="background:#F7F5F1;">
+                  <div style="flex:1; min-width:0;">
+                    <div style="font:500 14px Inter; color:#191C18; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ row.resource }}</div>
+                    <div style="font:400 12px Inter; color:#6B6F68; margin-top:3px;">{{ row.patron }} · <span style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; color:#8C1515;">{{ row.id }}</span></div>
+                  </div>
+                  <span style="{{ row.pillStyle }}"><span style="{{ row.dotStyle }}"></span>{{ row.statusLabel }}</span>
+                  <div style="font:500 12px Inter; color:#6B6F68; width:84px; text-align:right;">{{ row.time }}</div>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="background:#fff; border:1px solid #E7E3DC; border-radius:16px; padding:22px 24px; box-shadow:0 1px 2px rgba(20,25,18,.04), 0 6px 16px rgba(20,25,18,.05);">
+              <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+                <div style="display:flex; align-items:center; gap:9px;">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#6B6F68" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"></path><path d="M11 18l-6-6 6-6"></path></svg>
+                  <h2 style="font:600 17px Inter; margin:0;">Incoming</h2>
+                </div>
+                <a style="font:500 13px Inter; color:#8C1515; text-decoration:none; cursor:pointer;">View all</a>
+              </div>
+              <p style="font:400 12px Inter; color:#9a9e92; margin:0 0 10px;">Due back or being returned to the desk</p>
+              <sc-for list="{{ incoming }}" as="row" hint-placeholder-count="4">
+                <div style="display:flex; align-items:center; gap:14px; padding:13px 10px; border-radius:10px; cursor:pointer;" style-hover="background:#F7F5F1;">
+                  <div style="flex:1; min-width:0;">
+                    <div style="font:500 14px Inter; color:#191C18; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ row.resource }}</div>
+                    <div style="font:400 12px Inter; color:#6B6F68; margin-top:3px;">{{ row.patron }} · <span style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; color:#8C1515;">{{ row.id }}</span></div>
+                  </div>
+                  <span style="{{ row.pillStyle }}"><span style="{{ row.dotStyle }}"></span>{{ row.statusLabel }}</span>
+                  <div style="font:500 12px Inter; color:#6B6F68; width:84px; text-align:right;">{{ row.time }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isCheckout }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:1100px;">
+          <div style="margin-bottom:24px;">
+            <h1 style="font:700 28px/1.1 Inter; letter-spacing:-.02em; margin:0;">Checkout</h1>
+            <p style="font:400 14px Inter; color:#6B6F68; margin:6px 0 0;">Scan a patron card, then scan each resource going out.</p>
+          </div>
+
+          <sc-if value="{{ coDone }}" hint-placeholder-val="{{ false }}">
+            <div style="background:#fff; border:1px solid #E7E3DC; border-radius:16px; padding:48px 40px; box-shadow:0 1px 2px rgba(20,25,18,.04), 0 6px 16px rgba(20,25,18,.05); display:flex; flex-direction:column; align-items:center; text-align:center; max-width:560px; margin:0 auto;">
+              <div style="width:60px; height:60px; border-radius:50%; background:#E7F4EC; display:flex; align-items:center; justify-content:center;">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#1A8A53" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+              </div>
+              <h2 style="font:700 22px Inter; margin:18px 0 6px;">Checkout complete</h2>
+              <p style="font:400 14px Inter; color:#6B6F68; margin:0;">Allocation <span style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace; color:#8C1515; font-weight:600;">{{ coLastId }}</span> · {{ coCount }} resources to {{ patron.name }}</p>
+              <p style="font:400 13px Inter; color:#9a9e92; margin:6px 0 0;">Processed by Angel Ramirez · The Tech Desk · due in {{ due }}</p>
+              <button onClick="{{ onReset }}" style="margin-top:24px; height:44px; padding:0 22px; border-radius:10px; border:none; background:#8C1515; color:#fff; font:600 14px Inter; cursor:pointer;">Start another checkout</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ coNotDone }}" hint-placeholder-val="{{ true }}">
+          <div style="display:grid; grid-template-columns:1fr 340px; gap:20px; align-items:start;">
+            <div style="display:flex; flex-direction:column; gap:16px;">
+
+              <div style="background:#fff; border:1px solid #E7E3DC; border-radius:16px; padding:18px 20px; box-shadow:0 1px 2px rgba(20,25,18,.04), 0 6px 16px rgba(20,25,18,.05); display:flex; align-items:center; gap:16px;">
+                <div style="width:46px; height:46px; flex:none; border-radius:12px; background:#F5E9E9; color:#8C1515; display:flex; align-items:center; justify-content:center; font:600 16px Inter;">JC</div>
+                <div style="flex:1; min-width:0;">
+                  <div style="display:flex; align-items:center; gap:9px;">
+                    <span style="font:600 16px Inter; color:#191C18;">{{ patron.name }}</span>
+                    <span style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; color:#8C1515;">{{ patron.id }}</span>
+                    <span style="display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:8px; background:#E7F4EC; color:#1A8A53; font:600 11px Inter;"><span style="width:6px; height:6px; border-radius:50%; background:#1A8A53;"></span>Good standing</span>
+                  </div>
+                  <div style="font:400 13px Inter; color:#6B6F68; margin-top:3px;">{{ patron.role }} · {{ patron.meta }} · {{ patron.loans }} active loan</div>
+                </div>
+                <button style="height:36px; padding:0 14px; border-radius:10px; border:1px solid #E7E3DC; background:#fff; color:#6B6F68; font:500 13px Inter; cursor:pointer;">Change</button>
+              </div>
+
+              <div style="background:#fff; border:1px solid #E7E3DC; border-radius:16px; padding:20px; box-shadow:0 1px 2px rgba(20,25,18,.04), 0 6px 16px rgba(20,25,18,.05);">
+                <div style="position:relative; display:flex; align-items:center;">
+                  <svg style="position:absolute; left:16px;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8C1515" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5v14"></path><path d="M7 5v14"></path><path d="M11 5v14"></path><path d="M15 5v14"></path><path d="M19 5v14"></path></svg>
+                  <input value="{{ coScanVal }}" onChange="{{ onScanInput }}" onKeyDown="{{ onScanKey }}" autofocus placeholder="Scan or type a resource SKU, then Enter" style="width:100%; height:52px; padding:0 16px 0 48px; border-radius:12px; border:1.5px solid #8C1515; background:#FCFAF7; font:500 15px Inter; color:#191C18; outline:none;" />
+                </div>
+                <sc-if value="{{ coFlash }}" hint-placeholder-val="{{ false }}">
+                  <div style="{{ coFlashStyle }}">{{ coFlash.msg }}</div>
+                </sc-if>
+                <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:14px;">
+                  <span style="font:600 11px Inter; letter-spacing:.05em; text-transform:uppercase; color:#9a9e92;">Quick scan</span>
+                  <sc-for list="{{ quickSkus }}" as="q" hint-placeholder-count="4">
+                    <button onClick="{{ q.onClick }}" style="height:30px; padding:0 12px; border-radius:8px; border:1px solid #E7E3DC; background:#F7F5F1; color:#191C18; font:500 12px Inter; cursor:pointer; display:flex; align-items:center; gap:6px;" style-hover="background:#fff;">
+                      <span style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:#8C1515;">{{ q.sku }}</span>
+                    </button>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div style="background:#fff; border:1px solid #E7E3DC; border-radius:16px; padding:8px 12px 12px; box-shadow:0 1px 2px rgba(20,25,18,.04), 0 6px 16px rgba(20,25,18,.05);">
+                <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 10px 6px;">
+                  <h2 style="font:600 15px Inter; margin:0;">Scanned resources</h2>
+                  <span style="font:500 12px Inter; color:#6B6F68;">{{ coCount }} items</span>
+                </div>
+                <sc-if value="{{ coEmpty }}" hint-placeholder-val="{{ false }}">
+                  <div style="padding:34px 10px; text-align:center; color:#9a9e92; font:400 13px Inter;">No resources scanned yet — scan an item above to begin.</div>
+                </sc-if>
+                <sc-for list="{{ coItems }}" as="it" hint-placeholder-count="2">
+                  <div style="display:flex; align-items:center; gap:14px; padding:13px 10px; border-top:1px solid #F1EEE8;">
+                    <div style="width:38px; height:38px; flex:none; border-radius:9px; background:#F7F5F1; display:flex; align-items:center; justify-content:center;">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6B6F68" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"></rect><path d="M8 21h8"></path><path d="M12 17v4"></path></svg>
+                    </div>
+                    <div style="flex:1; min-width:0;">
+                      <div style="font:500 14px Inter; color:#191C18;">{{ it.name }}</div>
+                      <div style="display:flex; align-items:center; gap:8px; margin-top:3px;">
+                        <span style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; color:#8C1515;">{{ it.sku }}</span>
+                        <span style="{{ it.typeStyle }}">{{ it.type }}</span>
+                      </div>
+                    </div>
+                    <span style="display:inline-flex; align-items:center; gap:5px; padding:4px 10px; border-radius:10px; background:#E7F4EC; color:#1A8A53; font:600 12px Inter;"><span style="width:6px; height:6px; border-radius:50%; background:#1A8A53;"></span>Available</span>
+                    <button onClick="{{ it.onRemove }}" style="width:32px; height:32px; flex:none; border-radius:8px; border:none; background:transparent; color:#9a9e92; cursor:pointer; display:flex; align-items:center; justify-content:center;" style-hover="background:#FBEAEA; color:#E03131;">
+                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="M6 6l12 12"></path></svg>
+                    </button>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="background:#fff; border:1px solid #E7E3DC; border-radius:16px; padding:22px; box-shadow:0 1px 2px rgba(20,25,18,.04), 0 6px 16px rgba(20,25,18,.05); position:sticky; top:90px;">
+              <h2 style="font:600 16px Inter; margin:0 0 16px;">Loan summary</h2>
+              <div style="font:600 11px Inter; letter-spacing:.06em; text-transform:uppercase; color:#9a9e92; margin-bottom:8px;">Loan window</div>
+              <div style="display:flex; gap:2px; background:#F1EEE8; border-radius:10px; padding:3px; margin-bottom:18px;">
+                <sc-for list="{{ dueOpts }}" as="d" hint-placeholder-count="4">
+                  <div onClick="{{ d.onClick }}" style="{{ d.style }}">{{ d.label }}</div>
+                </sc-for>
+              </div>
+              <div style="display:flex; justify-content:space-between; padding:9px 0; font:400 14px Inter; color:#6B6F68;"><span>Patron</span><span style="color:#191C18; font-weight:500;">{{ patron.name }}</span></div>
+              <div style="display:flex; justify-content:space-between; padding:9px 0; border-top:1px solid #F1EEE8; font:400 14px Inter; color:#6B6F68;"><span>Resources</span><span style="color:#191C18; font-weight:500;">{{ coCount }}</span></div>
+              <div style="display:flex; justify-content:space-between; padding:9px 0; border-top:1px solid #F1EEE8; font:400 14px Inter; color:#6B6F68;"><span>Due in</span><span style="color:#191C18; font-weight:500;">{{ due }}</span></div>
+              <div style="display:flex; justify-content:space-between; padding:9px 0; border-top:1px solid #F1EEE8; font:400 14px Inter; color:#6B6F68;"><span>Operator</span><span style="color:#191C18; font-weight:500;">Angel R.</span></div>
+              <button onClick="{{ onComplete }}" style="width:100%; height:48px; margin-top:18px; border-radius:10px; border:none; background:#8C1515; color:#fff; font:600 15px Inter; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg>
+                Complete checkout
+              </button>
+              <p style="font:400 12px Inter; color:#9a9e92; text-align:center; margin:12px 0 0;">Patron agrees to the equipment loan policy.</p>
+            </div>
+          </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isReturn }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:1100px;">
+          <div style="margin-bottom:24px;">
+            <h1 style="font:700 28px/1.1 Inter; letter-spacing:-.02em; margin:0;">Return</h1>
+            <p style="font:400 14px Inter; color:#6B6F68; margin:6px 0 0;">Scan each resource coming back. The system finds its open loan and checks timing.</p>
+          </div>
+
+          <sc-if value="{{ retDone }}" hint-placeholder-val="{{ false }}">
+            <div style="background:#fff; border:1px solid #E7E3DC; border-radius:16px; padding:48px 40px; box-shadow:0 1px 2px rgba(20,25,18,.04), 0 6px 16px rgba(20,25,18,.05); display:flex; flex-direction:column; align-items:center; text-align:center; max-width:560px; margin:0 auto;">
+              <div style="width:60px; height:60px; border-radius:50%; background:#E7F4EC; display:flex; align-items:center; justify-content:center;">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#1A8A53" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+              </div>
+              <h2 style="font:700 22px Inter; margin:18px 0 6px;">Return complete</h2>
+              <p style="font:400 14px Inter; color:#6B6F68; margin:0;">{{ retCount }} resources checked back in · {{ retLate }} flagged late</p>
+              <p style="font:400 13px Inter; color:#9a9e92; margin:6px 0 0;">Processed by Angel Ramirez · The Tech Desk</p>
+              <button onClick="{{ onRetReset }}" style="margin-top:24px; height:44px; padding:0 22px; border-radius:10px; border:none; background:#8C1515; color:#fff; font:600 14px Inter; cursor:pointer;">Start another return</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ retNotDone }}" hint-placeholder-val="{{ true }}">
+          <div style="display:grid; grid-template-columns:1fr 340px; gap:20px; align-items:start;">
+            <div style="display:flex; flex-direction:column; gap:16px;">
+
+              <div style="background:#fff; border:1px solid #E7E3DC; border-radius:16px; padding:20px; box-shadow:0 1px 2px rgba(20,25,18,.04), 0 6px 16px rgba(20,25,18,.05);">
+                <div style="position:relative; display:flex; align-items:center;">
+                  <svg style="position:absolute; left:16px;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8C1515" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5v14"></path><path d="M7 5v14"></path><path d="M11 5v14"></path><path d="M15 5v14"></path><path d="M19 5v14"></path></svg>
+                  <input value="{{ retScanVal }}" onChange="{{ onRetInput }}" onKeyDown="{{ onRetKey }}" autofocus placeholder="Scan a resource being returned, then Enter" style="width:100%; height:52px; padding:0 16px 0 48px; border-radius:12px; border:1.5px solid #8C1515; background:#FCFAF7; font:500 15px Inter; color:#191C18; outline:none;" />
+                </div>
+                <sc-if value="{{ retFlash }}" hint-placeholder-val="{{ false }}">
+                  <div style="{{ retFlashStyle }}">{{ retFlash.msg }}</div>
+                </sc-if>
+                <p style="font:400 12px Inter; color:#9a9e92; margin:14px 0 0;">Try <span style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace; color:#8C1515;">AU-0531</span>, <span style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace; color:#8C1515;">LT-0461</span>, or <span style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace; color:#8C1515;">TB-0102</span></p>
+              </div>
+
+              <div style="background:#fff; border:1px solid #E7E3DC; border-radius:16px; padding:8px 12px 12px; box-shadow:0 1px 2px rgba(20,25,18,.04), 0 6px 16px rgba(20,25,18,.05);">
+                <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 10px 6px;">
+                  <h2 style="font:600 15px Inter; margin:0;">Checking in</h2>
+                  <span style="font:500 12px Inter; color:#6B6F68;">{{ retCount }} items</span>
+                </div>
+                <sc-if value="{{ retEmpty }}" hint-placeholder-val="{{ false }}">
+                  <div style="padding:34px 10px; text-align:center; color:#9a9e92; font:400 13px Inter;">Nothing returned yet — scan an item to check it in.</div>
+                </sc-if>
+                <sc-for list="{{ retItems }}" as="it" hint-placeholder-count="2">
+                  <div style="display:flex; align-items:center; gap:14px; padding:14px 10px; border-top:1px solid #F1EEE8;">
+                    <div style="width:38px; height:38px; flex:none; border-radius:9px; background:#F7F5F1; display:flex; align-items:center; justify-content:center;">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6B6F68" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"></path><path d="M11 18l-6-6 6-6"></path></svg>
+                    </div>
+                    <div style="flex:1; min-width:0;">
+                      <div style="font:500 14px Inter; color:#191C18;">{{ it.name }}</div>
+                      <div style="display:flex; align-items:center; gap:8px; margin-top:3px;">
+                        <span style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; color:#8C1515;">{{ it.id }}</span>
+                        <span style="font:400 12px Inter; color:#6B6F68;">{{ it.patron }}</span>
+                      </div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:6px;">
+                      <sc-for list="{{ it.conds }}" as="c" hint-placeholder-count="2">
+                        <button onClick="{{ c.onClick }}" style="{{ c.style }}">{{ c.label }}</button>
+                      </sc-for>
+                    </div>
+                    <span style="{{ it.timingStyle }}"><span style="{{ it.timingDot }}"></span>{{ it.timingLabel }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="background:#fff; border:1px solid #E7E3DC; border-radius:16px; padding:22px; box-shadow:0 1px 2px rgba(20,25,18,.04), 0 6px 16px rgba(20,25,18,.05); position:sticky; top:90px;">
+              <h2 style="font:600 16px Inter; margin:0 0 16px;">Return summary</h2>
+              <div style="display:flex; justify-content:space-between; padding:9px 0; font:400 14px Inter; color:#6B6F68;"><span>Resources in</span><span style="color:#191C18; font-weight:500;">{{ retCount }}</span></div>
+              <div style="display:flex; justify-content:space-between; padding:9px 0; border-top:1px solid #F1EEE8; font:400 14px Inter; color:#6B6F68;"><span>Flagged late</span><span style="color:#E03131; font-weight:600;">{{ retLate }}</span></div>
+              <div style="display:flex; justify-content:space-between; padding:9px 0; border-top:1px solid #F1EEE8; font:400 14px Inter; color:#6B6F68;"><span>Operator</span><span style="color:#191C18; font-weight:500;">Angel R.</span></div>
+              <button onClick="{{ onRetFinish }}" style="width:100%; height:48px; margin-top:18px; border-radius:10px; border:none; background:#8C1515; color:#fff; font:600 15px Inter; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+                Finish return
+              </button>
+              <p style="font:400 12px Inter; color:#9a9e92; text-align:center; margin:12px 0 0;">Late items notify the patron automatically.</p>
+            </div>
+          </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isLoans }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:1180px;">
+          <div style="display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:20px;">
+            <div>
+              <h1 style="font:700 28px/1.1 Inter; letter-spacing:-.02em; margin:0;">Active Loans</h1>
+              <p style="font:400 14px Inter; color:#6B6F68; margin:6px 0 0;">Every open allocation on the floor — outgoing and coming back.</p>
+            </div>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:18px;">
+            <sc-for list="{{ loanFilters }}" as="f" hint-placeholder-count="5">
+              <button onClick="{{ f.onClick }}" style="{{ f.style }}">{{ f.label }}<span style="{{ f.badgeStyle }}">{{ f.count }}</span></button>
+            </sc-for>
+          </div>
+
+          <div style="background:#fff; border:1px solid #E7E3DC; border-radius:16px; box-shadow:0 1px 2px rgba(20,25,18,.04), 0 6px 16px rgba(20,25,18,.05); overflow-x:auto;">
+            <div style="min-width:840px;">
+            <div style="display:flex; align-items:center; gap:16px; padding:12px 22px; border-bottom:1px solid #F1EEE8; font:600 11px Inter; letter-spacing:.05em; text-transform:uppercase; color:#9a9e92;">
+              <span style="flex:1 0 200px; min-width:200px;">Resource</span>
+              <span style="width:140px;">Patron</span>
+              <span style="width:120px;">Operator</span>
+              <span style="width:130px;">Window</span>
+              <span style="width:120px;">Status</span>
+              <span style="width:84px; text-align:right;">Timing</span>
+            </div>
+            <sc-for list="{{ loanRows }}" as="r" hint-placeholder-count="6">
+              <div style="display:flex; align-items:center; gap:16px; padding:15px 22px; border-top:1px solid #F6F3EE; cursor:pointer;" style-hover="background:#FBFAF7;">
+                <div style="flex:1 0 200px; min-width:200px;">
+                  <div style="font:500 14px Inter; color:#191C18; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ r.resource }}</div>
+                  <div style="display:flex; align-items:center; gap:8px; margin-top:3px;">
+                    <span style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; color:#8C1515;">{{ r.id }}</span>
+                    <span style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:#9a9e92;">{{ r.sku }}</span>
+                  </div>
+                </div>
+                <span style="width:140px; font:500 13px Inter; color:#191C18;">{{ r.patron }}</span>
+                <span style="width:120px; font:400 13px Inter; color:#6B6F68;">{{ r.operator }}</span>
+                <span style="width:130px; font:400 13px Inter; color:#6B6F68;">{{ r.start }} → {{ r.due }}</span>
+                <span style="width:120px;"><span style="{{ r.pillStyle }}"><span style="{{ r.dotStyle }}"></span>{{ r.statusLabel }}</span></span>
+                <span style="width:84px; text-align:right;"><span style="{{ r.timeStyle }}">{{ r.time }}</span></span>
+              </div>
+            </sc-for>
+            <sc-if value="{{ loanEmpty }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:40px; text-align:center; color:#9a9e92; font:400 14px Inter;">No allocations in this view.</div>
+            </sc-if>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isPlaceholder }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:1180px; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:120px 0; text-align:center;">
+          <h1 style="font:700 26px Inter; margin:0;">{{ screenTitle }}</h1>
+          <p style="font:400 14px Inter; color:#6B6F68; margin-top:8px;">Part of the full console — not in this first pass.</p>
+        </div>
+      </sc-if>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {
+    screen: 'dashboard',
+    co: {
+      patron: { name: 'Jordan Chen', id: 'P-3389', role: 'Undergrad · Mechanical Engineering', meta: 'jchen@stanford.edu', loans: 1, standing: 'good' },
+      scan: '',
+      items: [ { sku: 'LT-0455', name: 'MacBook Pro 14" · M3', type: 'Laptop' } ],
+      due: '4 days',
+      done: false,
+      lastId: null,
+      flash: null
+    },
+    loanFilter: 'all',
+    ret: {
+      scan: '',
+      items: [ { sku: 'CM-0240', id: 'CK-127844', name: 'Canon EOS R5 Body', type: 'Camera', patron: 'S. Nakamura', late: 2, condition: 'Good' } ],
+      done: false,
+      flash: null
+    }
+  };
+
+  openLoans() {
+    return {
+      'CM-0240': { id: 'CK-127844', name: 'Canon EOS R5 Body', type: 'Camera', patron: 'S. Nakamura', late: 2 },
+      'AU-0531': { id: 'CK-127901', name: 'DJI RS 3 Gimbal', type: 'Support', patron: 'A. Whitfield', late: 1 },
+      'LT-0461': { id: 'CK-128003', name: 'MacBook Air 13" · M2', type: 'Laptop', patron: 'R. Gupta', late: 0 },
+      'AC-0890': { id: 'CK-128011', name: 'Anker 7-in-1 USB-C Hub', type: 'Adapter', patron: 'T. Brooks', late: 0 },
+      'TB-0102': { id: 'CK-128032', name: 'iPad Pro 12.9" + Pencil', type: 'Tablet', patron: 'L. Park', late: 0 }
+    };
+  }
+
+  retScan(rawSku) {
+    const sku = (rawSku || '').trim().toUpperCase();
+    const open = this.openLoans();
+    if (!open[sku]) { this.setState(s => ({ ret: { ...s.ret, scan: '', flash: { kind: 'err', msg: 'No open loan for ' + (sku || '—') } } })); return; }
+    if (this.state.ret.items.some(i => i.sku === sku)) { this.setState(s => ({ ret: { ...s.ret, scan: '', flash: { kind: 'err', msg: sku + ' already checked in' } } })); return; }
+    const it = { sku, ...open[sku], condition: 'Good' };
+    this.setState(s => ({ ret: { ...s.ret, items: [...s.ret.items, it], scan: '', flash: { kind: 'ok', msg: open[sku].name + ' checked in' } } }));
+  }
+
+  retCondition(sku, cond) { this.setState(s => ({ ret: { ...s.ret, items: s.ret.items.map(i => i.sku === sku ? { ...i, condition: cond } : i) } })); }
+  retSet(patch) { this.setState(s => ({ ret: { ...s.ret, ...patch } })); }
+  retFinish() { if (this.state.ret.items.length) this.setState(s => ({ ret: { ...s.ret, done: true } })); }
+  retReset() { this.setState(s => ({ ret: { ...s.ret, items: [], scan: '', done: false, flash: null } })); }
+
+  catalog() {
+    return {
+      'LT-0455': { name: 'MacBook Pro 14" · M3', type: 'Laptop' },
+      'LT-0461': { name: 'MacBook Air 13" · M2', type: 'Laptop' },
+      'TB-0102': { name: 'iPad Pro 12.9" + Pencil', type: 'Tablet' },
+      'CM-0231': { name: 'Sony A7 IV Body', type: 'Camera' },
+      'CM-0240': { name: 'Canon EOS R5 Body', type: 'Camera' },
+      'AU-0512': { name: 'Rode Wireless GO II', type: 'Audio' },
+      'AC-0890': { name: 'Anker 7-in-1 USB-C Hub', type: 'Adapter' },
+      'AC-0904': { name: 'USB-C to HDMI Adapter', type: 'Adapter' },
+      'PW-0330': { name: '96W USB-C Charger', type: 'Charger' }
+    };
+  }
+
+  coSet(patch) { this.setState(s => ({ co: { ...s.co, ...patch } })); }
+
+  coScan(rawSku) {
+    const sku = (rawSku || '').trim().toUpperCase();
+    const cat = this.catalog();
+    if (!cat[sku]) { this.coSet({ scan: '', flash: { kind: 'err', msg: 'No resource matches ' + (sku || '—') } }); return; }
+    if (this.state.co.items.some(i => i.sku === sku)) { this.coSet({ scan: '', flash: { kind: 'err', msg: sku + ' is already in this checkout' } }); return; }
+    this.coSet({ items: [...this.state.co.items, { sku, ...cat[sku] }], scan: '', flash: { kind: 'ok', msg: cat[sku].name + ' added' } });
+  }
+
+  coRemove(sku) { this.coSet({ items: this.state.co.items.filter(i => i.sku !== sku) }); }
+
+  coComplete() {
+    if (!this.state.co.items.length) return;
+    const id = 'CK-1281' + String(Math.floor(20 + Math.random() * 79));
+    this.coSet({ done: true, lastId: id });
+  }
+
+  coReset() {
+    this.setState(s => ({ co: { ...s.co, items: [], scan: '', done: false, lastId: null, flash: null } }));
+  }
+
+  icon(paths, sw) {
+    return React.createElement('svg', { width: 18, height: 18, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: sw || 1.7, strokeLinecap: 'round', strokeLinejoin: 'round' },
+      paths.map((d, i) => React.createElement('path', { key: i, d })));
+  }
+
+  icons() {
+    return {
+      dashboard: ['M3 13h7V3H3z', 'M14 21h7V11h-7z', 'M14 3v6h7V3z', 'M3 21h7v-6H3z'],
+      checkout: ['M5 12h14', 'M13 6l6 6-6 6'],
+      return: ['M19 12H5', 'M11 18l-6-6 6-6'],
+      loans: ['M8 6h13', 'M8 12h13', 'M8 18h13', 'M3 6h.01', 'M3 12h.01', 'M3 18h.01'],
+      resources: ['M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z', 'M3.27 6.96L12 12l8.73-5.04', 'M12 22V12'],
+      patrons: ['M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2', 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8', 'M23 21v-2a4 4 0 0 0-3-3.87', 'M16 3.13a4 4 0 0 1 0 7.75'],
+      settings: ['M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z', 'M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z']
+    };
+  }
+
+  statusCfg() {
+    return {
+      available: { label: 'Available', color: '#1A8A53', bg: '#E7F4EC' },
+      checkedout: { label: 'Checked out', color: '#4A5568', bg: '#EDEFF1' },
+      duesoon: { label: 'Due soon', color: '#C77700', bg: '#FBF1DF' },
+      overdue: { label: 'Overdue', color: '#E03131', bg: '#FBEAEA' },
+      returned: { label: 'Returned', color: '#1A8A53', bg: '#E7F4EC' },
+      reserved: { label: 'Reserved', color: '#4A5568', bg: '#EDEFF1' }
+    };
+  }
+
+  pill(status) {
+    const c = this.statusCfg()[status];
+    return {
+      statusLabel: c.label,
+      pillStyle: { display: 'inline-flex', alignItems: 'center', gap: '6px', flex: 'none', padding: '4px 10px', borderRadius: '10px', background: c.bg, color: c.color, font: '600 12px Inter', whiteSpace: 'nowrap' },
+      dotStyle: { width: '6px', height: '6px', borderRadius: '50%', background: c.color, flex: 'none' }
+    };
+  }
+
+  go(id) { this.setState({ screen: id }); }
+
+  allocations() {
+    return [
+      { id: 'CK-127844', resource: 'Canon EOS R5 Body', sku: 'CM-0240', patron: 'S. Nakamura', operator: 'A. Ramirez', status: 'overdue', start: 'Jun 8', due: 'Jun 15', time: '2d late' },
+      { id: 'CK-127901', resource: 'DJI RS 3 Gimbal', sku: 'AU-0531', patron: 'A. Whitfield', operator: 'M. Lee', status: 'overdue', start: 'Jun 10', due: 'Jun 16', time: '1d late' },
+      { id: 'CK-128003', resource: 'MacBook Air 13" · M2', sku: 'LT-0461', patron: 'R. Gupta', operator: 'A. Ramirez', status: 'duesoon', start: 'Jun 13', due: 'Today', time: 'Due 5pm' },
+      { id: 'CK-128011', resource: 'Anker 7-in-1 USB-C Hub', sku: 'AC-0890', patron: 'T. Brooks', operator: 'A. Ramirez', status: 'duesoon', start: 'Jun 13', due: 'Today', time: 'Due 6pm' },
+      { id: 'CK-128072', resource: 'MacBook Pro 14" · M3', sku: 'LT-0455', patron: 'J. Chen', operator: 'A. Ramirez', status: 'checkedout', start: 'Jun 14', due: 'Jun 20', time: 'In 3d' },
+      { id: 'CK-128068', resource: 'Sony A7 IV Body', sku: 'CM-0231', patron: 'M. Okafor', operator: 'D. Singh', status: 'checkedout', start: 'Jun 12', due: 'Jun 22', time: 'In 5d' },
+      { id: 'CK-128081', resource: 'iPad Pro 12.9" + Pencil', sku: 'TB-0102', patron: 'L. Park', operator: 'M. Lee', status: 'reserved', start: 'Today', due: 'Jun 21', time: 'Pickup 2pm' },
+      { id: 'CK-128090', resource: 'Rode Wireless GO II', sku: 'AU-0512', patron: 'D. Alvarez', operator: 'A. Ramirez', status: 'reserved', start: 'Today', due: 'Jun 19', time: 'Pickup 4pm' },
+      { id: 'CK-128055', resource: '96W USB-C Charger', sku: 'PW-0330', patron: 'K. Yamada', operator: 'D. Singh', status: 'checkedout', start: 'Jun 11', due: 'Jun 25', time: 'In 8d' }
+    ];
+  }
+
+  setLoanFilter(f) { this.setState({ loanFilter: f }); }
+
+  renderVals() {
+    const ic = this.icons();
+    const cur = this.state.screen;
+    const groups = [
+      { label: 'Operations', items: [['dashboard', 'Dashboard'], ['checkout', 'Checkout'], ['return', 'Return'], ['loans', 'Active Loans']] },
+      { label: 'Catalog', items: [['resources', 'Resources'], ['patrons', 'Patrons']] },
+      { label: 'Admin', items: [['settings', 'Settings']] }
+    ];
+    const navGroups = groups.map(g => ({
+      label: g.label,
+      items: g.items.map(([id, label]) => {
+        const active = id === cur;
+        return {
+          label,
+          icon: this.icon(ic[id]),
+          iconColor: active ? '#E66' : '#8a8f81',
+          onClick: () => this.go(id),
+          style: { display: 'flex', alignItems: 'center', gap: '11px', width: '100%', padding: '9px 12px', marginBottom: '2px', border: 'none', borderRadius: '10px', background: active ? '#1C231A' : 'transparent', color: active ? '#fff' : '#cfd3c9', font: active ? '600 14px Inter' : '500 14px Inter', cursor: 'pointer' },
+          styleHover: { background: active ? '#1C231A' : '#181d15' }
+        };
+      })
+    }));
+
+    const kpiAccents = {
+      checkedout: { accent: '#4A5568', bg: '#EDEFF1' },
+      duesoon: { accent: '#C77700', bg: '#FBF1DF' },
+      overdue: { accent: '#E03131', bg: '#FBEAEA' },
+      available: { accent: '#1A8A53', bg: '#E7F4EC' }
+    };
+    const kpiData = [
+      { key: 'checkedout', label: 'Checked out', value: '142', sub: 'items on loan now', ic: ['M5 12h14', 'M13 6l6 6-6 6'] },
+      { key: 'duesoon', label: 'Due today', value: '18', sub: 'expected back by 6pm', ic: ['M12 6v6l4 2', 'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z'] },
+      { key: 'overdue', label: 'Overdue', value: '5', sub: 'items past due', ic: ['M12 9v4', 'M12 17h.01', 'M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z'] },
+      { key: 'available', label: 'Available', value: '327', sub: 'ready to check out', ic: ['M20 6 9 17l-5-5'] }
+    ];
+    const kpis = kpiData.map(k => {
+      const a = kpiAccents[k.key];
+      return {
+        label: k.label, value: k.value, sub: k.sub, accent: a.accent,
+        icon: this.icon(k.ic, 1.9),
+        cardStyle: { background: a.bg, borderLeft: '4px solid ' + a.accent, borderRadius: '16px', padding: '20px 22px', boxShadow: '0 1px 2px rgba(20,25,18,.04), 0 6px 16px rgba(20,25,18,.05)' }
+      };
+    });
+
+    const outgoing = [
+      { resource: 'MacBook Pro 14" · M3', patron: 'J. Chen', id: 'CK-128072', status: 'checkedout', time: 'Due in 3d' },
+      { resource: 'Sony A7 IV Body', patron: 'M. Okafor', id: 'CK-128068', status: 'checkedout', time: 'Due in 5d' },
+      { resource: 'iPad Pro 12.9" + Pencil', patron: 'L. Park', id: 'CK-128081', status: 'reserved', time: 'Pickup 2pm' },
+      { resource: 'Rode Wireless GO II', patron: 'D. Alvarez', id: 'CK-128090', status: 'reserved', time: 'Pickup 4pm' }
+    ].map(r => ({ ...r, ...this.pill(r.status) }));
+
+    const incoming = [
+      { resource: 'Canon EOS R5 Body', patron: 'S. Nakamura', id: 'CK-127844', status: 'overdue', time: '2d late' },
+      { resource: 'DJI RS 3 Gimbal', patron: 'A. Whitfield', id: 'CK-127901', status: 'overdue', time: '1d late' },
+      { resource: 'MacBook Air 13" · M2', patron: 'R. Gupta', id: 'CK-128003', status: 'duesoon', time: 'Due 5pm' },
+      { resource: 'Anker USB-C Hub', patron: 'T. Brooks', id: 'CK-128011', status: 'duesoon', time: 'Due 6pm' }
+    ].map(r => ({ ...r, ...this.pill(r.status) }));
+
+    const titles = { resources: 'Resources', patrons: 'Patrons', settings: 'Settings' };
+
+    // ---- Checkout ----
+    const co = this.state.co;
+    const typeColors = { Laptop: '#4A5568', Tablet: '#4A5568', Camera: '#8C1515', Audio: '#C77700', Adapter: '#1A8A53', Charger: '#1A8A53' };
+    const coItems = co.items.map(it => ({
+      sku: it.sku, name: it.name, type: it.type,
+      typeStyle: { font: '600 11px Inter', letterSpacing: '.04em', textTransform: 'uppercase', color: typeColors[it.type] || '#4A5568' },
+      onRemove: () => this.coRemove(it.sku)
+    }));
+    const dueOpts = ['4 hours', '1 day', '4 days', '1 week'].map(d => ({
+      label: d, active: d === co.due, onClick: () => this.coSet({ due: d }),
+      style: { flex: 1, textAlign: 'center', padding: '9px 0', borderRadius: '8px', cursor: 'pointer', font: (d === co.due ? '600' : '500') + ' 13px Inter', background: d === co.due ? '#fff' : 'transparent', color: d === co.due ? '#191C18' : '#6B6F68', boxShadow: d === co.due ? '0 1px 2px rgba(20,25,18,.08)' : 'none' }
+    }));
+    const quickSkus = ['AC-0890', 'PW-0330', 'AC-0904', 'CM-0231'].map(sku => ({
+      sku, name: this.catalog()[sku].name, onClick: () => this.coScan(sku)
+    }));
+    const flashStyle = co.flash ? { display: 'flex', alignItems: 'center', gap: '8px', marginTop: '12px', padding: '10px 14px', borderRadius: '10px', font: '500 13px Inter', background: co.flash.kind === 'ok' ? '#E7F4EC' : '#FBEAEA', color: co.flash.kind === 'ok' ? '#1A8A53' : '#E03131' } : {};
+
+    // ---- Return ----
+    const ret = this.state.ret;
+    const retItems = ret.items.map(it => {
+      const onTime = it.late === 0;
+      const conds = ['Good', 'Damaged'].map(c => ({
+        label: c, active: it.condition === c, onClick: () => this.retCondition(it.sku, c),
+        style: { padding: '5px 11px', borderRadius: '8px', cursor: 'pointer', font: (it.condition === c ? '600' : '500') + ' 12px Inter', border: '1px solid ' + (it.condition === c ? (c === 'Damaged' ? '#E03131' : '#1A8A53') : '#E7E3DC'), background: it.condition === c ? (c === 'Damaged' ? '#FBEAEA' : '#E7F4EC') : '#fff', color: it.condition === c ? (c === 'Damaged' ? '#E03131' : '#1A8A53') : '#6B6F68' }
+      }));
+      return {
+        sku: it.sku, name: it.name, id: it.id, patron: it.patron,
+        onTime,
+        timingStyle: { display: 'inline-flex', alignItems: 'center', gap: '5px', padding: '4px 10px', borderRadius: '10px', font: '600 12px Inter', background: onTime ? '#E7F4EC' : '#FBEAEA', color: onTime ? '#1A8A53' : '#E03131' },
+        timingDot: { width: '6px', height: '6px', borderRadius: '50%', background: onTime ? '#1A8A53' : '#E03131' },
+        timingLabel: onTime ? 'On time' : it.late + (it.late === 1 ? ' day late' : ' days late'),
+        conds
+      };
+    });
+    const lateCount = ret.items.filter(i => i.late > 0).length;
+    const retFlashStyle = ret.flash ? { display: 'flex', alignItems: 'center', gap: '8px', marginTop: '12px', padding: '10px 14px', borderRadius: '10px', font: '500 13px Inter', background: ret.flash.kind === 'ok' ? '#E7F4EC' : '#FBEAEA', color: ret.flash.kind === 'ok' ? '#1A8A53' : '#E03131' } : {};
+
+    // ---- Active Loans ----
+    const allAlloc = this.allocations();
+    const lf = this.state.loanFilter;
+    const counts = { all: allAlloc.length, checkedout: 0, duesoon: 0, overdue: 0, reserved: 0 };
+    allAlloc.forEach(a => { counts[a.status]++; });
+    const filterDefs = [
+      { id: 'all', label: 'All loans' },
+      { id: 'overdue', label: 'Overdue' },
+      { id: 'duesoon', label: 'Due soon' },
+      { id: 'checkedout', label: 'Checked out' },
+      { id: 'reserved', label: 'Reserved' }
+    ];
+    const loanFilters = filterDefs.map(f => ({
+      label: f.label, count: counts[f.id], active: f.id === lf,
+      onClick: () => this.setLoanFilter(f.id),
+      style: { display: 'inline-flex', alignItems: 'center', gap: '7px', height: '34px', padding: '0 14px', borderRadius: '10px', border: '1px solid ' + (f.id === lf ? '#191C18' : '#E7E3DC'), background: f.id === lf ? '#191C18' : '#fff', color: f.id === lf ? '#fff' : '#191C18', font: '500 13px Inter', cursor: 'pointer' },
+      badgeStyle: { font: '600 11px Inter', padding: '1px 7px', borderRadius: '7px', background: f.id === lf ? 'rgba(255,255,255,.18)' : '#F1EEE8', color: f.id === lf ? '#fff' : '#6B6F68' }
+    }));
+    const loanRows = allAlloc.filter(a => lf === 'all' || a.status === lf).map(a => {
+      const p = this.pill(a.status);
+      return { ...a, ...p, overdue: a.status === 'overdue', timeStyle: { font: (a.status === 'overdue' ? '600' : '500') + ' 13px Inter', color: a.status === 'overdue' ? '#E03131' : '#6B6F68' } };
+    });
+
+    return {
+      navGroups,
+      isDashboard: cur === 'dashboard',
+      isCheckout: cur === 'checkout',
+      isReturn: cur === 'return',
+      isLoans: cur === 'loans',
+      isPlaceholder: ['resources', 'patrons', 'settings'].includes(cur),
+      screenTitle: titles[cur] || '',
+      kpis, outgoing, incoming,
+      patron: co.patron,
+      coItems, coCount: co.items.length, dueOpts, quickSkus, due: co.due,
+      coScanVal: co.scan,
+      onScanInput: (e) => this.coSet({ scan: e.target.value }),
+      onScanKey: (e) => { if (e.key === 'Enter') this.coScan(e.target.value); },
+      coFlash: co.flash, coFlashStyle: flashStyle,
+      coDone: co.done, coNotDone: !co.done, coLastId: co.lastId,
+      onComplete: () => this.coComplete(),
+      onReset: () => this.coReset(),
+      coEmpty: co.items.length === 0,
+      retItems, retCount: ret.items.length, retLate: lateCount, retEmpty: ret.items.length === 0,
+      retScanVal: ret.scan,
+      onRetInput: (e) => this.retSet({ scan: e.target.value }),
+      onRetKey: (e) => { if (e.key === 'Enter') this.retScan(e.target.value); },
+      retFlash: ret.flash, retFlashStyle,
+      retDone: ret.done, retNotDone: !ret.done,
+      onRetFinish: () => this.retFinish(),
+      onRetReset: () => this.retReset(),
+      loanFilters, loanRows, loanCount: loanRows.length, loanEmpty: loanRows.length === 0
+    };
+  }
+}
+</script>
+</body>
+</html>

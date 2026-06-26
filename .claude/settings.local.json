@@ -19,7 +19,20 @@
       "Read(//tmp/**)",
       "Bash(node -e ' *)",
       "Bash(pkill -f \"next dev\")",
-      "Bash(pkill -f \"next-server\")"
+      "Bash(pkill -f \"next-server\")",
+      "Bash(find . -type d -name \"to_add\" -not -path \"*/node_modules/*\")",
+      "Bash(find .. -maxdepth 3 -type d -name \"to_add\")",
+      "Bash(node -e \"const p=require\\('lucide-react/package.json'\\); console.log\\('name',p.name,'version',p.version\\); const L=require\\('lucide-react'\\); console.log\\('has LayoutGrid?', !!L.LayoutGrid, '| has ArrowRight?', !!L.ArrowRight, '| has Search?', !!L.Search\\)\")",
+      "Bash(rm -f src/app/dashboard/page.tsx)",
+      "Bash(rmdir src/app/dashboard)",
+      "Bash(curl -s http://localhost:3001/dashboard)",
+      "Bash(curl -s http://localhost:3001/loans)",
+      "Bash(curl -s \"http://localhost:3000/_next/static/css/app/layout.css\")",
+      "Bash(curl -s -o /dev/null -w \"dashboard retry -> %{http_code}\\\\n\" http://localhost:3000/dashboard)",
+      "Read(//private/tmp/**)",
+      "Bash(curl -s http://localhost:3001/checkouts)",
+      "Bash(curl -s http://localhost:3001/resources)",
+      "Bash(curl -s http://localhost:3001/patrons)"
     ]
   }
 }
